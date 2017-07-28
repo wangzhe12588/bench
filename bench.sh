@@ -1,20 +1,20 @@
 #!/bin/bash
- 
+
 get_opsy() {
     [ -f /etc/redhat-release ] && awk '{print ($1,$3~/^[0-9]/?$3:$4)}' /etc/redhat-release && return
     [ -f /etc/os-release ] && awk -F'[= "]' '/PRETTY_NAME/{print $3,$4,$5}' /etc/os-release && return
     [ -f /etc/lsb-release ] && awk -F'[="]+' '/DESCRIPTION/{print $2}' /etc/lsb-release && return
 }
- 
+
 next() {
     printf "%-70s\n" "-" | sed 's/\s/-/g'
 }
- 
+
 io_test() {
     (LANG=en_US dd if=/dev/zero of=test_$$ bs=64k count=16k conv=fdatasync) 2>&1 | awk -F, '{io=$NF} END { print io}' | sed 's/^[ \t]*//;s/[ \t]*$//'
     rm -rf test_*;
 }
- 
+
 read_Free() {
     Free="0"
     for addFree in `df |awk -v c=$1 '/^\/dev/{print $c}'`
@@ -32,7 +32,7 @@ read_Free() {
     echo "$Free$UNIT"
     }
 }
- 
+
     cname=$( awk -F: '/model name/ {name=$2} END {print name}' /proc/cpuinfo | sed 's/^[ \t]*//;s/[ \t]*$//' )
     cores=$( awk -F: '/model name/ {core++} END {print core}' /proc/cpuinfo )
     freq=$( awk -F: '/cpu MHz/ {freq=$2} END {print freq}' /proc/cpuinfo | sed 's/^[ \t]*//;s/[ \t]*$//' )
@@ -47,7 +47,7 @@ read_Free() {
     arch=$( uname -m )
     lbit=$( getconf LONG_BIT )
     kern=$( uname -r )
- 
+
     clear
     next
     echo -e "\t\t\tInformation View"
@@ -63,7 +63,7 @@ read_Free() {
     echo "Arch                 : $arch ($lbit Bit)"
     echo "Kernel               : $kern"
 next
- 
+
     echo -ne "I/O speed   :"
     io1=$( io_test )
     echo -ne " $io1"
